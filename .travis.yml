@@ -5,7 +5,7 @@ services:
 
 env:
   global:
-  - IMAGE_NAME=hdfs-client
+  - IMAGE_NAME=guangie88/hdfs-client
   
 before_script:
 - set -e
