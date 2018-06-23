@@ -1,0 +1,33 @@
+language: bash
+
+services:
+- docker
+
+env:
+  global:
+  - IMAGE_NAME=hdfs-client
+  
+before_script:
+- set -e
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+  fi
+
+script:
+- docker build -t $IMAGE_NAME:onbuild --target onbuild .
+- docker build -t $IMAGE_NAME:krb5-onbuild --target krb5-onbuild .
+- docker build -t $IMAGE_NAME:aws-onbuild --target aws-onbuild .
+- docker build -t $IMAGE_NAME:aws-krb5-onbuild --target aws-krb5-onbuild .
+
+after_success:
+- |
+  if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+    docker push $IMAGE_NAME:onbuild;
+    docker push $IMAGE_NAME:krb5-onbuild;
+    docker push $IMAGE_NAME:aws-onbuild;
+    docker push $IMAGE_NAME:aws-krb5-onbuild;
+  fi
+
+branches:
+  only:
+  - master
